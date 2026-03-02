@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobacc MOC Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">M</span>
+        <div>
+          <p class="brand-name">Mobacc</p>
+          <p class="brand-sub">Management of Change Portal</p>
+        </div>
+      </div>
+      <nav class="top-actions">
+        <button class="btn btn-secondary" data-scroll="#flow">Procesflow</button>
+        <button class="btn btn-primary" id="open-request">Nieuwe MOC</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="hero card">
+        <p class="eyebrow">Safety-first workflow</p>
+        <h1>MOC digitaal aanvragen, beoordelen en afsluiten</h1>
+        <p>
+          Deze frontview is klikbaar voor operators, engineering en HSE. De
+          workflowlogica draait op de achtergrond via n8n-webhooks.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="start-now">Start aanvraag</button>
+          <button class="btn btn-secondary" data-scroll="#dashboard">
+            Bekijk dashboard
+          </button>
+        </div>
+      </section>
+
+      <section id="flow" class="card">
+        <div class="section-head">
+          <h2>Procesflow</h2>
+          <p>Klik een fase voor detail, regels en n8n-event.</p>
+        </div>
+        <div id="flow-grid" class="flow-grid"></div>
+      </section>
+
+      <section class="split">
+        <article class="card" id="phase-detail">
+          <h2>Fase details</h2>
+          <p>Selecteer een fase in de flow.</p>
+        </article>
+
+        <article id="dashboard" class="card">
+          <h2>KPI Snapshot</h2>
+          <div class="kpi-grid">
+            <div class="kpi"><span>Open MOC</span><strong id="kpi-open">0</strong></div>
+            <div class="kpi"><span>Pending approvals</span><strong id="kpi-approvals">0</strong></div>
+            <div class="kpi"><span>Overdue acties</span><strong id="kpi-overdue">0</strong></div>
+            <div class="kpi"><span>Noodmaatregelen</span><strong id="kpi-emergency">0</strong></div>
+          </div>
+          <button class="btn btn-secondary" id="sync-kpi">KPI sync via n8n</button>
+        </article>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>Recente dossiers (demo)</h2>
+          <p>Voorbeelddata; in productie gevuld vanuit n8n + datastore.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>MOC #</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Actie</th>
+              </tr>
+            </thead>
+            <tbody id="cases-table"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="request-modal">
+      <form id="request-form" method="dialog">
+        <h2>Nieuwe MOC aanvraag</h2>
+        <label>
+          Type wijziging
+          <select name="changeType" required>
+            <option value="Blijvend">Blijvende wijziging</option>
+            <option value="Tijdelijk">Tijdelijke wijziging</option>
+            <option value="Noodmaatregel">Noodmaatregel</option>
+          </select>
+        </label>
+        <label>
+          Installatieonderdeel
+          <input name="asset" type="text" required placeholder="Bijv. Vullijn 2" />
+        </label>
+        <label>
+          Omschrijving
+          <textarea
+            name="description"
+            rows="4"
+            required
+            placeholder="Korte technische omschrijving van de wijziging"
+          ></textarea>
+        </label>
+        <menu>
+          <button class="btn btn-secondary" value="cancel" type="reset">Annuleren</button>
+          <button class="btn btn-primary" id="submit-request" type="submit">Indienen</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
