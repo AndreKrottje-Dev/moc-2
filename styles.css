@@ -31,6 +31,18 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
+.topbar-primary {
+  top: 0;
+  z-index: 30;
+}
+
+.topbar-tabs {
+  top: 72px;
+  z-index: 29;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -48,6 +60,12 @@ body {
   font-weight: 700;
 }
 
+.brand-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
 .brand-name {
   margin: 0;
   font-weight: 700;
@@ -62,6 +80,25 @@ body {
 .top-actions {
   display: flex;
   gap: 8px;
+}
+
+.header-context {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+.header-context label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mobacc-anthracite);
+  min-width: 170px;
+}
+
+.header-context input {
+  margin-top: 4px;
+  padding: 8px;
+  font-size: 0.9rem;
 }
 
 .layout {
@@ -126,25 +163,28 @@ p {
   gap: 8px;
 }
 
-.page-nav {
-  margin: 12px 0 16px;
+.page-tabs {
+  margin: 0;
   display: grid;
   grid-template-columns: repeat(8, minmax(40px, 1fr));
   gap: 8px;
+  flex: 1;
 }
 
-.page-chip {
+.tab-chip {
   border: 1px solid var(--border);
   background: #fafbfc;
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 9px 10px;
   font-weight: 700;
   cursor: pointer;
+  font-size: 0.86rem;
 }
 
-.page-chip.active {
+.tab-chip.active {
   border-color: var(--mobacc-red);
   box-shadow: 0 0 0 2px rgba(255, 23, 33, 0.1);
+  background: #fff5f6;
 }
 
 .moc-form {
@@ -297,7 +337,7 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .section-head {
@@ -396,7 +436,7 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .page-nav {
+  .page-tabs {
     grid-template-columns: repeat(4, minmax(40px, 1fr));
   }
 
@@ -404,5 +444,14 @@ textarea {
     flex-direction: column;
     align-items: start;
     gap: 10px;
+  }
+
+  .topbar-tabs {
+    top: 112px;
+  }
+
+  .header-context {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }

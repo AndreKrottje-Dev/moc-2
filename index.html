@@ -7,19 +7,33 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="topbar">
+    <header class="topbar topbar-primary">
       <div class="brand">
-        <span class="brand-mark">M</span>
+        <img class="brand-logo" src="assets/mobacc-logo.png" alt="Mobacc logo" />
         <div>
           <p class="brand-name">Mobacc</p>
           <p class="brand-sub">MOC Digitaal Formulier (8 pagina’s)</p>
         </div>
       </div>
-      <nav class="top-actions">
-        <button class="btn btn-secondary" data-scroll="#wizard">Formulier</button>
-        <button class="btn btn-secondary" data-scroll="#flow">Workflow</button>
+      <div class="header-context">
+        <label>
+          MOC nummer
+          <input id="header-moc-number" type="text" placeholder="MOC-YYYY-XXXX" />
+        </label>
+        <label>
+          Datum aanvraag
+          <input id="header-request-date" type="date" />
+        </label>
         <button class="btn btn-primary" id="save-draft-top">Opslaan concept</button>
-      </nav>
+      </div>
+    </header>
+
+    <header class="topbar topbar-tabs">
+      <div id="page-tabs" class="page-tabs"></div>
+      <div class="top-actions">
+        <button class="btn btn-secondary" id="show-workflow-view">Procesflow</button>
+        <button class="btn btn-primary" id="show-form-view">Nieuwe MOC</button>
+      </div>
     </header>
 
     <main class="layout">
@@ -31,8 +45,8 @@
           digitaal ingevuld. Verdere behandeling verloopt via n8n workflowstates.
         </p>
         <div class="hero-actions">
-          <button class="btn btn-primary" data-scroll="#wizard">Start formulier</button>
-          <button class="btn btn-secondary" data-scroll="#flow">Bekijk workflow</button>
+          <button class="btn btn-primary" id="start-form-view">Start formulier</button>
+          <button class="btn btn-secondary" id="open-workflow-view">Bekijk workflow</button>
         </div>
       </section>
 
@@ -41,7 +55,6 @@
           <h2>8 Pagina Formulier</h2>
           <p id="page-caption">Pagina 1 van 8</p>
         </div>
-        <div id="page-nav" class="page-nav"></div>
 
         <form id="moc-form" class="moc-form">
           <article class="form-page" data-page="1">
@@ -50,11 +63,11 @@
             <div class="form-row two-cols">
               <label>
                 Datum aanvraag
-                <input type="date" name="p1_datum_aanvraag" required />
+                <input id="p1-datum-aanvraag" type="date" name="p1_datum_aanvraag" required />
               </label>
               <label>
                 MOC nummer (toegekend tijdens MOC-bespreking)
-                <input type="text" name="p1_moc_nummer" placeholder="Automatisch of handmatig" />
+                <input id="p1-moc-nummer" type="text" name="p1_moc_nummer" placeholder="Automatisch of handmatig" />
               </label>
             </div>
 
@@ -310,37 +323,37 @@
           </article>
 
           <div class="wizard-actions">
-            <button class="btn btn-secondary" type="button" id="prev-page">Vorige</button>
-            <button class="btn btn-secondary" type="button" id="next-page">Volgende</button>
             <button class="btn btn-secondary" type="button" id="save-draft">Opslaan concept</button>
             <button class="btn btn-primary" type="submit" id="submit-form">Verstuur MOC</button>
           </div>
         </form>
       </section>
 
-      <section id="flow" class="card">
-        <div class="section-head">
-          <h2>Workflowstates (n8n)</h2>
-          <p>Automatische routering per type MOC en herinneringen.</p>
-        </div>
-        <div id="flow-grid" class="flow-grid"></div>
-      </section>
-
-      <section class="split">
-        <article id="phase-detail" class="card">
-          <h2>State detail</h2>
-          <p>Selecteer een workflowstate voor event details.</p>
-        </article>
-        <article class="card" id="dashboard">
-          <h2>KPI Snapshot</h2>
-          <div class="kpi-grid">
-            <div class="kpi"><span>Open MOC</span><strong id="kpi-open">0</strong></div>
-            <div class="kpi"><span>Valide aanvragen</span><strong id="kpi-valid">0</strong></div>
-            <div class="kpi"><span>Pending approvals</span><strong id="kpi-approvals">0</strong></div>
-            <div class="kpi"><span>Evaluatie reminders</span><strong id="kpi-reminders">0</strong></div>
+      <section id="workflow-panel" hidden>
+        <section id="flow" class="card">
+          <div class="section-head">
+            <h2>Workflowstates (n8n)</h2>
+            <p>Automatische routering per type MOC en herinneringen.</p>
           </div>
-          <button class="btn btn-secondary" id="sync-kpi">KPI sync via n8n</button>
-        </article>
+          <div id="flow-grid" class="flow-grid"></div>
+        </section>
+
+        <section class="split">
+          <article id="phase-detail" class="card">
+            <h2>State detail</h2>
+            <p>Selecteer een workflowstate voor event details.</p>
+          </article>
+          <article class="card" id="dashboard">
+            <h2>KPI Snapshot</h2>
+            <div class="kpi-grid">
+              <div class="kpi"><span>Open MOC</span><strong id="kpi-open">0</strong></div>
+              <div class="kpi"><span>Valide aanvragen</span><strong id="kpi-valid">0</strong></div>
+              <div class="kpi"><span>Pending approvals</span><strong id="kpi-approvals">0</strong></div>
+              <div class="kpi"><span>Evaluatie reminders</span><strong id="kpi-reminders">0</strong></div>
+            </div>
+            <button class="btn btn-secondary" id="sync-kpi">KPI sync via n8n</button>
+          </article>
+        </section>
       </section>
     </main>
 

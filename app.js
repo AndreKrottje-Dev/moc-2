@@ -72,12 +72,18 @@ const WEBHOOKS = {
 };
 
 const pageCaption = document.getElementById("page-caption");
-const pageNav = document.getElementById("page-nav");
+const pageTabs = document.getElementById("page-tabs");
 const pages = Array.from(document.querySelectorAll(".form-page"));
 const form = document.getElementById("moc-form");
 const toast = document.getElementById("toast");
 const flowGrid = document.getElementById("flow-grid");
 const phaseDetail = document.getElementById("phase-detail");
+const wizardSection = document.getElementById("wizard");
+const workflowPanel = document.getElementById("workflow-panel");
+const headerMocNumber = document.getElementById("header-moc-number");
+const headerRequestDate = document.getElementById("header-request-date");
+const page1MocNumber = document.getElementById("p1-moc-nummer");
+const page1RequestDate = document.getElementById("p1-datum-aanvraag");
 
 let currentPage = 1;
 
@@ -396,15 +402,15 @@ function renderActieLijst() {
 }
 
 function renderPageNav() {
-  pageNav.innerHTML = "";
+  pageTabs.innerHTML = "";
   pages.forEach((_, index) => {
     const pageNumber = index + 1;
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `page-chip ${pageNumber === currentPage ? "active" : ""}`;
-    button.textContent = `P${pageNumber}`;
+    button.className = `tab-chip ${pageNumber === currentPage ? "active" : ""}`;
+    button.textContent = `Pagina ${pageNumber}`;
     button.addEventListener("click", () => goToPage(pageNumber));
-    pageNav.appendChild(button);
+    pageTabs.appendChild(button);
   });
 }
 
@@ -416,6 +422,27 @@ function goToPage(pageNumber) {
 
   pageCaption.textContent = `Pagina ${currentPage} van 8`;
   renderPageNav();
+  showFormView();
+}
+
+function syncHeaderAndPage1(source) {
+  if (source === "header") {
+    page1MocNumber.value = headerMocNumber.value;
+    page1RequestDate.value = headerRequestDate.value;
+  } else {
+    headerMocNumber.value = page1MocNumber.value;
+    headerRequestDate.value = page1RequestDate.value;
+  }
+}
+
+function showFormView() {
+  wizardSection.hidden = false;
+  workflowPanel.hidden = true;
+}
+
+function showWorkflowView() {
+  wizardSection.hidden = true;
+  workflowPanel.hidden = false;
 }
 
 function formToObject(formElement) {
@@ -498,8 +525,15 @@ function updateKpis() {
 }
 
 function attachButtons() {
-  document.getElementById("prev-page").addEventListener("click", () => goToPage(currentPage - 1));
-  document.getElementById("next-page").addEventListener("click", () => goToPage(currentPage + 1));
+  document.getElementById("show-form-view").addEventListener("click", showFormView);
+  document.getElementById("show-workflow-view").addEventListener("click", showWorkflowView);
+  document.getElementById("start-form-view").addEventListener("click", showFormView);
+  document.getElementById("open-workflow-view").addEventListener("click", showWorkflowView);
+
+  headerMocNumber.addEventListener("input", () => syncHeaderAndPage1("header"));
+  headerRequestDate.addEventListener("input", () => syncHeaderAndPage1("header"));
+  page1MocNumber.addEventListener("input", () => syncHeaderAndPage1("page"));
+  page1RequestDate.addEventListener("input", () => syncHeaderAndPage1("page"));
 
   document.getElementById("save-draft").addEventListener("click", async () => {
     const payload = {
@@ -521,13 +555,6 @@ function attachButtons() {
   document.getElementById("sync-kpi").addEventListener("click", async () => {
     await postWebhook(WEBHOOKS.syncKpi, { action: "kpi_sync", timestamp: new Date().toISOString() });
     showToast("KPI sync getriggerd.");
-  });
-
-  document.querySelectorAll("[data-scroll]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const target = document.querySelector(button.dataset.scroll);
-      target?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
   });
 }
 
@@ -593,6 +620,8 @@ function init() {
   renderWorkflowStates();
   attachButtons();
   goToPage(1);
+  syncHeaderAndPage1("page");
+  showFormView();
   updateKpis();
 }
 
