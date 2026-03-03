@@ -197,6 +197,10 @@ p {
   gap: 12px;
 }
 
+.form-page[hidden] {
+  display: none !important;
+}
+
 fieldset {
   border: 1px solid var(--border);
   border-radius: 10px;
