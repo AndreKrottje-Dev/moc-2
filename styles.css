@@ -1,10 +1,11 @@
 :root {
-  --mobacc-red: #ff1721;
+  --mobacc-red: #d8141d;
   --mobacc-anthracite: #63757d;
+  --muted: #4e5451;
   --white: #ffffff;
-  --bg: #f4f6f8;
-  --border: #d7dde1;
-  --text: #1f2a30;
+  --bg: #f7f8f6;
+  --border: #e2e6e1;
+  --text: #1c1f1e;
   --ok: #117a37;
 }
 
@@ -73,7 +74,7 @@ body {
 
 .brand-sub {
   margin: 0;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -91,7 +92,7 @@ body {
 .header-context label {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
   min-width: 170px;
 }
 
@@ -173,7 +174,7 @@ p {
 
 .tab-chip {
   border: 1px solid var(--border);
-  background: #fafbfc;
+  background: #ffffff;
   border-radius: 8px;
   padding: 9px 10px;
   font-weight: 700;
@@ -183,8 +184,8 @@ p {
 
 .tab-chip.active {
   border-color: var(--mobacc-red);
-  box-shadow: 0 0 0 2px rgba(255, 23, 33, 0.1);
-  background: #fff5f6;
+  box-shadow: 0 0 0 2px rgba(216, 20, 29, 0.12);
+  background: #fff8f8;
 }
 
 .moc-form {
@@ -210,7 +211,7 @@ fieldset {
 }
 
 legend {
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
   font-weight: 700;
   padding: 0 6px;
 }
@@ -223,7 +224,7 @@ label {
 
 .inline-field {
   font-weight: 600;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
 }
 
 input,
@@ -266,7 +267,7 @@ textarea {
 
 .subnote {
   margin: 0;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -352,7 +353,7 @@ textarea {
 }
 
 .section-head p {
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
 }
 
 .flow-grid {
@@ -367,19 +368,19 @@ textarea {
   border-radius: 10px;
   padding: 10px;
   cursor: pointer;
-  background: #fafbfc;
+  background: #ffffff;
   text-align: left;
 }
 
 .phase:hover,
 .phase.active {
   border-color: var(--mobacc-red);
-  box-shadow: 0 0 0 2px rgba(255, 23, 33, 0.1);
+  box-shadow: 0 0 0 2px rgba(216, 20, 29, 0.12);
 }
 
 .phase small {
   display: block;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
 }
 
 .split {
@@ -403,7 +404,7 @@ textarea {
 
 .kpi span {
   display: block;
-  color: var(--mobacc-anthracite);
+  color: var(--muted);
   font-size: 0.82rem;
 }
 
