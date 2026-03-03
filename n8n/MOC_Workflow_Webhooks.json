@@ -1,0 +1,326 @@
+{
+  "name": "MOC - Webhooks & Routing",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "moc-save-draft",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_Save_Draft",
+      "name": "Webhook Save Draft",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json;\nconst now = new Date().toISOString();\nconst draftId = input?.data?.p1_moc_nummer || `DRAFT-${Date.now()}`;\nreturn [{\n  ok: true,\n  source: 'moc-save-draft',\n  draftId,\n  status: input.status || 'Draft',\n  page: input.page || 1,\n  requester: input.requester || null,\n  storedAt: now,\n  message: 'Concept opgeslagen in workflow.'\n}];"
+      },
+      "id": "Code_Draft",
+      "name": "Build Draft Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "Respond_Draft",
+      "name": "Respond Save Draft",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "path": "moc-submit-full",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_Submit",
+      "name": "Webhook Submit Full",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json || {};\nconst data = input.data || {};\nconst submittedAt = input.submittedAt || new Date().toISOString();\nconst year = new Date(submittedAt).getFullYear();\nconst random = String(Math.floor(Math.random() * 9000) + 1000);\nconst mocId = data.p1_moc_nummer || `MOC-${year}-${random}`;\n\nconst routingRoles = input.routingRoles || {};\nconst mocTypes = Array.isArray(data.p2_type_moc)\n  ? data.p2_type_moc\n  : data.p2_type_moc\n    ? [data.p2_type_moc]\n    : [];\n\nconst baseAssignments = [\n  { role: 'Aanvrager', assignee: routingRoles.aanvrager || 'Aanvrager' },\n  { role: 'Technical Engineer / Hoofd TD', assignee: routingRoles.technicalEngineer || 'Technical Engineer / Hoofd TD' },\n  { role: 'Directie / HR', assignee: routingRoles.directieHR || 'Directie / HR' },\n  { role: 'Plantmanager / Directie', assignee: routingRoles.plantmanagerDirectie || 'Plantmanager / Directie' },\n  { role: 'IT manager / directie', assignee: routingRoles.itManagerDirectie || 'IT manager / directie' }\n];\n\nconst typeMapping = {\n  Techniek: 'Technical Engineer / Hoofd TD',\n  Personeel: 'Directie / HR',\n  Organisatie: 'Plantmanager / Directie',\n  IT: 'IT manager / directie'\n};\n\nconst selectedByType = mocTypes.map((type) => ({\n  mocType: type,\n  teamRole: typeMapping[type] || 'Aanvrager'\n}));\n\nconst uniqueAssignments = [];\nconst seen = new Set();\nfor (const entry of baseAssignments) {\n  const key = `${entry.role}|${entry.assignee}`;\n  if (!seen.has(key)) {\n    seen.add(key);\n    uniqueAssignments.push(entry);\n  }\n}\n\nconst aanvraagValide = Boolean(input.aanvraagValide);\nconst nextStatus = aanvraagValide ? 'Hazard_P4' : 'Rejected_No_Page3_Yes';\n\nconst executionDateRaw = input?.reminders?.basedOnExecutionDate || data.p3_datum_uitvoering || null;\nlet reminderDate = null;\nif (executionDateRaw) {\n  const baseDate = new Date(executionDateRaw);\n  if (!Number.isNaN(baseDate.getTime())) {\n    baseDate.setDate(baseDate.getDate() + 28);\n    reminderDate = baseDate.toISOString().slice(0, 10);\n  }\n}\n\nreturn [{\n  ok: true,\n  source: 'moc-submit-full',\n  mocId,\n  submittedAt,\n  aanvraagValide,\n  nextStatus,\n  requiresHazardIdentification: Boolean(input.requiresHazardIdentification),\n  mocTypes,\n  selectedByType,\n  teamAssignments: uniqueAssignments,\n  reminder: {\n    enabled: Boolean(reminderDate),\n    dueDate: reminderDate,\n    reminderEvent: input?.reminders?.reminderEvent || 'moc.evaluation.reminder.4weeks'\n  },\n  analytics: input.analytics || {},\n  workflowNotes: [\n    'Pagina 3 leidend: minimaal 1x Ja vereist voor valide aanvraag.',\n    'Pagina 4 per functionaris invullen inclusief toelichting.',\n    'Pagina 8 evaluatie 4 weken na uitvoeringsdatum.'\n  ],\n  message: aanvraagValide\n    ? 'Aanvraag valide. Route naar gevarenidentificatie gestart.'\n    : 'Aanvraag niet valide. Geen Ja gevonden op pagina 3.'\n}];"
+      },
+      "id": "Code_Submit",
+      "name": "Process Submit & Routing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "Respond_Submit",
+      "name": "Respond Submit",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "path": "moc-state-click",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_State",
+      "name": "Webhook State Click",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json || {};\nreturn [{\n  ok: true,\n  source: 'moc-state-click',\n  stateId: input.stateId || null,\n  event: input.event || null,\n  receivedAt: new Date().toISOString(),\n  message: 'Workflowstate-event ontvangen.'\n}];"
+      },
+      "id": "Code_State",
+      "name": "Build State Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "Respond_State",
+      "name": "Respond State Click",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "path": "moc-kpi-sync",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "Webhook_KPI",
+      "name": "Webhook KPI Sync",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  ok: true,\n  source: 'moc-kpi-sync',\n  syncedAt: new Date().toISOString(),\n  kpi: {\n    openMoc: 7,\n    validRequests: 3,\n    pendingApprovals: 2,\n    evaluationReminders: 1\n  },\n  message: 'KPI sync uitgevoerd (placeholder data).'\n}];"
+      },
+      "id": "Code_KPI",
+      "name": "Build KPI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "Respond_KPI",
+      "name": "Respond KPI Sync",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "Cron_Reminder",
+      "name": "Daily Reminder Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1320,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  source: 'daily-reminder-check',\n  runDate: new Date().toISOString(),\n  action: 'Controleer dossiers met reminder.dueDate = vandaag en stuur evaluatie-reminder',\n  reminderEvent: 'moc.evaluation.reminder.4weeks',\n  note: 'Koppel hier opslag (DB/Sheets) en notificatie node (Email/Teams).'\n}];"
+      },
+      "id": "Code_Reminder",
+      "name": "Build Reminder Job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1080,
+        860
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Save Draft": {
+      "main": [
+        [
+          {
+            "node": "Build Draft Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Draft Response": {
+      "main": [
+        [
+          {
+            "node": "Respond Save Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Submit Full": {
+      "main": [
+        [
+          {
+            "node": "Process Submit & Routing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Submit & Routing": {
+      "main": [
+        [
+          {
+            "node": "Respond Submit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook State Click": {
+      "main": [
+        [
+          {
+            "node": "Build State Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build State Response": {
+      "main": [
+        [
+          {
+            "node": "Respond State Click",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook KPI Sync": {
+      "main": [
+        [
+          {
+            "node": "Build KPI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build KPI Response": {
+      "main": [
+        [
+          {
+            "node": "Respond KPI Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Reminder Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build Reminder Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "staticData": null,
+  "meta": {
+    "template": "moc-webhooks"
+  },
+  "pinData": {}
+}
