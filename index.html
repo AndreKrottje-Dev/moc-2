@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobacc MOC Portal</title>
+    <title>Mobacc MOC - 8 Pagina Formulier</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,111 +12,339 @@
         <span class="brand-mark">M</span>
         <div>
           <p class="brand-name">Mobacc</p>
-          <p class="brand-sub">Management of Change Portal</p>
+          <p class="brand-sub">MOC Digitaal Formulier (8 pagina’s)</p>
         </div>
       </div>
       <nav class="top-actions">
-        <button class="btn btn-secondary" data-scroll="#flow">Procesflow</button>
-        <button class="btn btn-primary" id="open-request">Nieuwe MOC</button>
+        <button class="btn btn-secondary" data-scroll="#wizard">Formulier</button>
+        <button class="btn btn-secondary" data-scroll="#flow">Workflow</button>
+        <button class="btn btn-primary" id="save-draft-top">Opslaan concept</button>
       </nav>
     </header>
 
     <main class="layout">
       <section class="hero card">
-        <p class="eyebrow">Safety-first workflow</p>
-        <h1>MOC digitaal aanvragen, beoordelen en afsluiten</h1>
+        <p class="eyebrow">Safety-first, compliance-first</p>
+        <h1>Management of Change (MOC)</h1>
         <p>
-          Deze frontview is klikbaar voor operators, engineering en HSE. De
-          workflowlogica draait op de achtergrond via n8n-webhooks.
+          Dit scherm volgt de bestaande 8-pagina structuur. Pagina 1 blijft inhoudelijk gelijk aan het huidige formulier en wordt
+          digitaal ingevuld. Verdere behandeling verloopt via n8n workflowstates.
         </p>
         <div class="hero-actions">
-          <button class="btn btn-primary" id="start-now">Start aanvraag</button>
-          <button class="btn btn-secondary" data-scroll="#dashboard">
-            Bekijk dashboard
-          </button>
+          <button class="btn btn-primary" data-scroll="#wizard">Start formulier</button>
+          <button class="btn btn-secondary" data-scroll="#flow">Bekijk workflow</button>
         </div>
+      </section>
+
+      <section id="wizard" class="card">
+        <div class="wizard-head">
+          <h2>8 Pagina Formulier</h2>
+          <p id="page-caption">Pagina 1 van 8</p>
+        </div>
+        <div id="page-nav" class="page-nav"></div>
+
+        <form id="moc-form" class="moc-form">
+          <article class="form-page" data-page="1">
+            <h3>Pagina 1 — Aanvraag voor wijzigingen</h3>
+
+            <div class="form-row two-cols">
+              <label>
+                Datum aanvraag
+                <input type="date" name="p1_datum_aanvraag" required />
+              </label>
+              <label>
+                MOC nummer (toegekend tijdens MOC-bespreking)
+                <input type="text" name="p1_moc_nummer" placeholder="Automatisch of handmatig" />
+              </label>
+            </div>
+
+            <fieldset>
+              <legend>Type wijziging (aankruisen wat van toepassing is)</legend>
+              <label class="inline-field">
+                Is wijziging een vervanging binnen vastgelegde specificaties van bestaande apparatuur/installatie/onderdelen?
+              </label>
+              <div class="radio-row">
+                <label><input type="radio" name="p1_identieke_vervanging" value="Nee" required /> Nee, dien MOC aanvraag in</label>
+                <label><input type="radio" name="p1_identieke_vervanging" value="Ja" /> Ja, stop, geen MOC-wijziging</label>
+              </div>
+
+              <div class="check-row">
+                <label><input type="radio" name="p1_type_wijziging" value="Blijvend" required /> Blijvende wijziging (gepland)</label>
+                <label><input type="radio" name="p1_type_wijziging" value="Tijdelijk" /> Tijdelijke wijziging (gepland)</label>
+                <label><input type="radio" name="p1_type_wijziging" value="Noodmaatregel" /> Noodmaatregel i.v.m. voorkomen incident of n.a.v. incident (binnen 24h melden)</label>
+              </div>
+
+              <label>
+                Duur tijdelijke wijziging
+                <input type="text" name="p1_duur_tijdelijk" placeholder="Bijv. 4 weken" />
+              </label>
+            </fieldset>
+
+            <div class="form-row two-cols">
+              <label>
+                Installatie onderdeel (selecteer uit lijst of voeg nieuw toe)
+                <div class="combo-row">
+                  <select id="asset-select" name="p1_installatie_onderdeel_select">
+                    <option value="">Kies installatieonderdeel</option>
+                  </select>
+                  <input id="asset-new" type="text" name="p1_installatie_onderdeel_nieuw" placeholder="Nieuw onderdeel / installatie" />
+                </div>
+              </label>
+              <label>
+                Aanvrager (gekoppeld aan Windows-profiel)
+                <input type="text" name="p1_aanvrager_windows" id="requester-field" readonly />
+              </label>
+            </div>
+
+            <label>
+              Volledige omschrijving gewenste wijziging (bijlagen zoals P&ID, tekening, procesbeschrijving mogelijk)
+              <textarea name="p1_omschrijving" rows="5" required></textarea>
+            </label>
+
+            <label>
+              Justificatie gewenste wijziging
+              <textarea name="p1_justificatie" rows="4" required></textarea>
+            </label>
+
+            <div class="form-row two-cols">
+              <label>
+                Naam aanvrager
+                <input type="text" name="p1_naam_aanvrager" required />
+              </label>
+              <label>
+                Handtekening aanvrager (digitaal)
+                <input type="text" name="p1_handtekening_aanvrager" placeholder="Naam + datum/tijd" />
+              </label>
+            </div>
+
+            <fieldset>
+              <legend>Noodmaatregel wijziging?</legend>
+              <label>
+                Waarom noodmaatregel?
+                <textarea name="p1_nood_waarom" rows="3"></textarea>
+              </label>
+              <label>
+                Noodzakelijke aanvullende voorzorgen
+                <textarea name="p1_nood_voorzorgen" rows="3"></textarea>
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Tijdelijke wijziging?</legend>
+              <label>
+                Wie maakt tijdelijke wijziging ongedaan?
+                <input type="text" name="p1_tijdelijk_ongedaan_door" />
+              </label>
+            </fieldset>
+          </article>
+
+          <article class="form-page" data-page="2" hidden>
+            <h3>Pagina 2 — Team samenstelling & autorisatie</h3>
+            <p class="subnote">
+              Na invullen pagina 1 gaat workflow naar betrokken functionarissen op basis van type MOC.
+            </p>
+
+            <fieldset>
+              <legend>MOC type classificatie</legend>
+              <div class="check-row">
+                <label><input type="checkbox" name="p2_type_moc" value="Techniek" /> Techniek</label>
+                <label><input type="checkbox" name="p2_type_moc" value="Personeel" /> Personeel</label>
+                <label><input type="checkbox" name="p2_type_moc" value="Organisatie" /> Organisatie</label>
+                <label><input type="checkbox" name="p2_type_moc" value="IT" /> IT</label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Functionarissen (beoordeling + latere uitvoeringsbeoordeling)</legend>
+              <div class="sign-grid">
+                <label>Aanvrager<input type="text" name="p2_role_aanvrager" /></label>
+                <label>Technical Engineer / Hoofd TD<input type="text" name="p2_role_td" /></label>
+                <label>Directie / HR<input type="text" name="p2_role_hr" /></label>
+                <label>Plantmanager / Directie<input type="text" name="p2_role_plant" /></label>
+                <label>IT Manager / Directie<input type="text" name="p2_role_it" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Autorisatie</legend>
+              <div class="sign-grid">
+                <label>Eindverantwoordelijke - datum<input type="date" name="p2_auth_ev_datum" /></label>
+                <label>Eindverantwoordelijke - handtekening<input type="text" name="p2_auth_ev_sign" /></label>
+                <label>Manager HSE - datum<input type="date" name="p2_auth_hse_datum" /></label>
+                <label>Manager HSE - handtekening<input type="text" name="p2_auth_hse_sign" /></label>
+                <label>Technical Engineer - datum<input type="date" name="p2_auth_te_datum" /></label>
+                <label>Technical Engineer - handtekening<input type="text" name="p2_auth_te_sign" /></label>
+              </div>
+            </fieldset>
+          </article>
+
+          <article class="form-page" data-page="3" hidden>
+            <h3>Pagina 3 — Toetsing MOC (leidend)</h3>
+            <p class="subnote">
+              Als 1 van de hokjes met ja is aangevuld is de aanvraag valide en dient gevaarsidentificatie doorlopen te worden.
+            </p>
+
+            <div class="form-row two-cols">
+              <label>
+                Datum uitvoering wijziging
+                <input type="date" name="p3_datum_uitvoering" />
+              </label>
+              <label>
+                Uitvoering door
+                <select name="p3_uitvoering_door">
+                  <option value="">Kies</option>
+                  <option value="Intern">Interne medewerkers</option>
+                  <option value="Extern">Externe medewerkers</option>
+                  <option value="Beide">Intern + extern</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="p3-toetsing-groepen"></div>
+          </article>
+
+          <article class="form-page" data-page="4" hidden>
+            <h3>Pagina 4 — Gevaaridentificatie voor wijzigingen</h3>
+            <p class="subnote">
+              Per functionaris invulbaar. Resultaten worden aan aanvrager gestuurd voor commissie-overleg.
+            </p>
+            <div id="p4-gevaar-groepen"></div>
+
+            <h4>P172-2 Checklijst 1</h4>
+            <p class="subnote">
+              Leidt de wijziging tot een ander (hoger) risico van algemene oorzaken die kunnen leiden tot vrijkomen van gevaarlijke stof?
+            </p>
+            <div id="p4-check1"></div>
+
+            <h4>P172-2 Checklijst 2</h4>
+            <p class="subnote">
+              Leidt de wijziging tot een ander (hoger) risico van processpecifieke oorzaken die kunnen leiden tot vrijkomen van gevaarlijke stof?
+            </p>
+            <div id="p4-check2"></div>
+          </article>
+
+          <article class="form-page" data-page="5" hidden>
+            <h3>Pagina 5 — Conclusie aanvrager (incl. AI-analyse)</h3>
+            <label>
+              Conclusie op basis van ingevulde pagina 4 van alle functionarissen
+              <textarea name="p5_conclusie_aanvrager" rows="6"></textarea>
+            </label>
+            <label>
+              AI analyse samenvatting (optioneel)
+              <textarea name="p5_ai_analyse" rows="6" placeholder="Automatisch voorstel vanuit analyseworkflow"></textarea>
+            </label>
+          </article>
+
+          <article class="form-page" data-page="6" hidden>
+            <h3>Pagina 6 — Benodigde acties (actielijst)</h3>
+            <p class="subnote">
+              Deze lijst wordt onderhouden door HSE managers. Later koppeling met Management Handboek voorzien.
+            </p>
+            <div id="p6-actielijst"></div>
+          </article>
+
+          <article class="form-page" data-page="7" hidden>
+            <h3>Pagina 7 — Uitvoering gecontroleerd</h3>
+            <fieldset>
+              <legend>Uitvoering van de wijziging is gecontroleerd</legend>
+              <div class="sign-grid">
+                <label>Eindverantwoordelijke - datum<input type="date" name="p7_exec_ev_datum" /></label>
+                <label>Eindverantwoordelijke - handtekening<input type="text" name="p7_exec_ev_sign" /></label>
+                <label>Aanvrager - datum<input type="date" name="p7_exec_aanv_datum" /></label>
+                <label>Aanvrager - handtekening<input type="text" name="p7_exec_aanv_sign" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Tijdelijke wijziging is ongedaan gemaakt</legend>
+              <div class="sign-grid">
+                <label>Datum ongedaanmaking<input type="date" name="p7_tijd_ongedaan_datum" /></label>
+                <label>Eindverantwoordelijke - handtekening<input type="text" name="p7_tijd_ev_sign" /></label>
+                <label>Aanvrager - datum<input type="date" name="p7_tijd_aanv_datum" /></label>
+                <label>Aanvrager - handtekening<input type="text" name="p7_tijd_aanv_sign" /></label>
+              </div>
+            </fieldset>
+          </article>
+
+          <article class="form-page" data-page="8" hidden>
+            <h3>Pagina 8 — MOC Evaluatie-formulier</h3>
+            <div class="form-row two-cols">
+              <label>
+                Datum evaluatie
+                <input type="date" name="p8_datum_evaluatie" />
+              </label>
+              <label>
+                Heeft de wijziging het beoogde effect gehad?
+                <select name="p8_effect_gehaald">
+                  <option value="">Kies</option>
+                  <option value="Ja">Ja</option>
+                  <option value="Nee">Nee, overweeg nieuwe MOC aanvraag</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Zijn alle acties aangaande de wijziging afgerond?
+              <select name="p8_acties_afgerond">
+                <option value="">Kies</option>
+                <option value="Ja">Ja, sluit MOC af</option>
+                <option value="Nee">Nee, MOC kan niet afgesloten</option>
+              </select>
+            </label>
+
+            <label>
+              Toelichting / opmerkingen
+              <textarea name="p8_toelichting" rows="5"></textarea>
+            </label>
+
+            <div class="form-row two-cols">
+              <label>
+                Naam aanvrager
+                <input type="text" name="p8_naam_aanvrager" />
+              </label>
+              <label>
+                Handtekening aanvrager
+                <input type="text" name="p8_handtekening_aanvrager" />
+              </label>
+            </div>
+          </article>
+
+          <div class="wizard-actions">
+            <button class="btn btn-secondary" type="button" id="prev-page">Vorige</button>
+            <button class="btn btn-secondary" type="button" id="next-page">Volgende</button>
+            <button class="btn btn-secondary" type="button" id="save-draft">Opslaan concept</button>
+            <button class="btn btn-primary" type="submit" id="submit-form">Verstuur MOC</button>
+          </div>
+        </form>
       </section>
 
       <section id="flow" class="card">
         <div class="section-head">
-          <h2>Procesflow</h2>
-          <p>Klik een fase voor detail, regels en n8n-event.</p>
+          <h2>Workflowstates (n8n)</h2>
+          <p>Automatische routering per type MOC en herinneringen.</p>
         </div>
         <div id="flow-grid" class="flow-grid"></div>
       </section>
 
       <section class="split">
-        <article class="card" id="phase-detail">
-          <h2>Fase details</h2>
-          <p>Selecteer een fase in de flow.</p>
+        <article id="phase-detail" class="card">
+          <h2>State detail</h2>
+          <p>Selecteer een workflowstate voor event details.</p>
         </article>
-
-        <article id="dashboard" class="card">
+        <article class="card" id="dashboard">
           <h2>KPI Snapshot</h2>
           <div class="kpi-grid">
             <div class="kpi"><span>Open MOC</span><strong id="kpi-open">0</strong></div>
+            <div class="kpi"><span>Valide aanvragen</span><strong id="kpi-valid">0</strong></div>
             <div class="kpi"><span>Pending approvals</span><strong id="kpi-approvals">0</strong></div>
-            <div class="kpi"><span>Overdue acties</span><strong id="kpi-overdue">0</strong></div>
-            <div class="kpi"><span>Noodmaatregelen</span><strong id="kpi-emergency">0</strong></div>
+            <div class="kpi"><span>Evaluatie reminders</span><strong id="kpi-reminders">0</strong></div>
           </div>
           <button class="btn btn-secondary" id="sync-kpi">KPI sync via n8n</button>
         </article>
       </section>
-
-      <section class="card">
-        <div class="section-head">
-          <h2>Recente dossiers (demo)</h2>
-          <p>Voorbeelddata; in productie gevuld vanuit n8n + datastore.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>MOC #</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Actie</th>
-              </tr>
-            </thead>
-            <tbody id="cases-table"></tbody>
-          </table>
-        </div>
-      </section>
     </main>
 
-    <dialog id="request-modal">
-      <form id="request-form" method="dialog">
-        <h2>Nieuwe MOC aanvraag</h2>
-        <label>
-          Type wijziging
-          <select name="changeType" required>
-            <option value="Blijvend">Blijvende wijziging</option>
-            <option value="Tijdelijk">Tijdelijke wijziging</option>
-            <option value="Noodmaatregel">Noodmaatregel</option>
-          </select>
-        </label>
-        <label>
-          Installatieonderdeel
-          <input name="asset" type="text" required placeholder="Bijv. Vullijn 2" />
-        </label>
-        <label>
-          Omschrijving
-          <textarea
-            name="description"
-            rows="4"
-            required
-            placeholder="Korte technische omschrijving van de wijziging"
-          ></textarea>
-        </label>
-        <menu>
-          <button class="btn btn-secondary" value="cancel" type="reset">Annuleren</button>
-          <button class="btn btn-primary" id="submit-request" type="submit">Indienen</button>
-        </menu>
-      </form>
-    </dialog>
-
     <div id="toast" class="toast"></div>
-
     <script src="app.js"></script>
   </body>
 </html>
