@@ -4,6 +4,6 @@
   "private": true,
   "description": "Static Mobacc MOC portal for Vercel",
   "scripts": {
-    "build": "mkdir -p dist && cp index.html app.js styles.css dist/"
+    "build": "mkdir -p dist/assets && cp index.html app.js styles.css dist/ && cp -R assets/. dist/assets/"
   }
 }

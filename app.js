@@ -80,6 +80,7 @@ const flowGrid = document.getElementById("flow-grid");
 const phaseDetail = document.getElementById("phase-detail");
 const wizardSection = document.getElementById("wizard");
 const workflowPanel = document.getElementById("workflow-panel");
+const heroPanel = document.getElementById("hero-panel");
 const headerMocNumber = document.getElementById("header-moc-number");
 const headerRequestDate = document.getElementById("header-request-date");
 const page1MocNumber = document.getElementById("p1-moc-nummer");
@@ -436,12 +437,14 @@ function syncHeaderAndPage1(source) {
 }
 
 function showFormView() {
+  heroPanel.hidden = true;
   wizardSection.hidden = false;
   workflowPanel.hidden = true;
 }
 
 function showWorkflowView() {
-  wizardSection.hidden = true;
+  heroPanel.hidden = false;
+  wizardSection.hidden = false;
   workflowPanel.hidden = false;
 }
 
